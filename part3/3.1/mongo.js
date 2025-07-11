@@ -22,8 +22,8 @@ mongoose.connect(url)
     const Person = mongoose.model('Person', personSchema)
 
     if(process.argv.length > 3) {
-      const name = process.argv[4]
-      const number = process.argv[5]
+      const name = process.argv[3]
+      const number = process.argv[4]
 
       const person = Person({name, number})
       person.save()
