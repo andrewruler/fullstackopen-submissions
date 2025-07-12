@@ -83,10 +83,31 @@ app.post('/api/persons', (req, res, next) => {
       .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+  const { name, number } = req.body
+
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        res.json(updatedPerson)
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
+
 // Error handler middleware
 app.use((error, req, res, next) => {
-  console.error(error.message)
-  res.status(500).json({ error: 'something went wrong' })
+  if (error.name === 'CastError') {
+    return res.status(400).json({ error: 'malformatted id' })
+  } else if(error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message })
+  }
 })
 
 app.listen(PORT, () => {
