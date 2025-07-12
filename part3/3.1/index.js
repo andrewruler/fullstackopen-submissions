@@ -18,69 +18,69 @@ morgan.token('body', (req) => {
 // Use morgan with custom format including :body token
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/api/persons', (req, res, next) =>  {
-    Person.find({})
-      .then(persons => res.json(persons))
-      .catch(error => next(error))
+app.get('/api/persons', (req, res, next) => {
+  Person.find({})
+    .then(persons => res.json(persons))
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res, next) => {
-    Person.find({})
-      .then(persons => {
-        res.send(
-            `<p>Phonebook has info for ${persons.length} people</p>
+  Person.find({})
+    .then(persons => {
+      res.send(
+        `<p>Phonebook has info for ${persons.length} people</p>
             <p>${new Date()}</p>`
-        )
-      })
-      .catch(error => next(error))
+      )
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info/:id', (req, res, next) => {
-    Person.findById(req.params.id)
-      .then(person => {
-        if (person) {
-            res.json(person)
-        } else {
-            res.status(404).end()
-        }
-      })
-      .catch(error => next(error))
+  Person.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(person)
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
-    Person.findByIdAndRemove(req.params.id)
-        .then(() => {
-            res.status(204).end()
-        })
-        .catch(error => next(error))
+  Person.findByIdAndRemove(req.params.id)
+    .then(() => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res, next) => {
-    const body = req.body
+  const body = req.body
 
-    if (!body.name) {
-        return res.status(400).json({ error: "name missing" })
-    }
-    if (!body.number) {
-        return res.status(400).json({ error: "number missing" })
-    }
+  if (!body.name) {
+    return res.status(400).json({ error: "name missing" })
+  }
+  if (!body.number) {
+    return res.status(400).json({ error: "number missing" })
+  }
 
-    Person.findOne({ name: body.name })
-      .then(existingPerson => {
-        if (existingPerson) {
-            return res.status(400).json({ error: "name must be unique" })
-        }
+  Person.findOne({ name: body.name })
+    .then(existingPerson => {
+      if (existingPerson) {
+        return res.status(400).json({ error: "name must be unique" })
+      }
 
-        const person = new Person({
-            name: body.name,
-            number: body.number
-        })
-
-        person.save()
-          .then(savedPerson => res.json(savedPerson))
-          .catch(error => next(error))
+      const person = new Person({
+        name: body.name,
+        number: body.number
       })
-      .catch(error => next(error))
+
+      person.save()
+        .then(savedPerson => res.json(savedPerson))
+        .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -105,7 +105,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 app.use((error, req, res, next) => {
   if (error.name === 'CastError') {
     return res.status(400).json({ error: 'malformatted id' })
-  } else if(error.name === 'ValidationError') {
+  } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
   }
 })
